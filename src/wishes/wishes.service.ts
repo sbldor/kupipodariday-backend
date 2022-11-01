@@ -1,26 +1,85 @@
 import { Injectable } from '@nestjs/common';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Wish } from './entities/wish.entity';
+import { In, MoreThan, Repository } from 'typeorm';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class WishesService {
-  create(createWishDto: CreateWishDto) {
-    return 'This action adds a new wish';
+  constructor(
+    @InjectRepository(Wish)
+    private wishRepository: Repository<Wish>,
+  ) {}
+
+  async create(user: User, createWishDto: CreateWishDto) {
+    return await this.wishRepository.save({
+      ...createWishDto,
+      owner: user,
+    });
   }
 
   findAll() {
-    return `This action returns all wishes`;
+    return this.wishRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} wish`;
+  findLastWishes() {
+    return this.wishRepository.find({
+      order: {
+        createdAt: 'DESC',
+      },
+      take: 40,
+    });
   }
 
-  update(id: number, updateWishDto: UpdateWishDto) {
-    return `This action updates a #${id} wish`;
+  findTopWishes() {
+    return this.wishRepository.find({
+      order: {
+        copied: 'DESC',
+      },
+      where: {
+        copied: MoreThan(0),
+      },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} wish`;
+  findWishesByUserId(userId: number) {
+    return this.wishRepository.find({
+      where: { owner: { id: userId } },
+      order: { updateAt: 'DESC' },
+    });
+  }
+
+  async findManyByIds(createWishlistDto) {
+    return await this.wishRepository.find({
+      where: { id: In(createWishlistDto.itemsId || []) },
+    });
+  }
+
+  async findOne(wishId: number): Promise<Wish> {
+    return await this.wishRepository.findOne({
+      where: {
+        id: wishId,
+      },
+      relations: {
+        owner: {
+          wishes: true,
+          wishLists: true,
+        },
+        offers: {
+          user: true,
+          item: true,
+        },
+      },
+    });
+  }
+
+  async update(id: number, ...param) {
+    return await this.wishRepository.update(id, param[0]);
+  }
+
+  async remove(id: number) {
+    return await this.wishRepository.delete({ id });
   }
 }

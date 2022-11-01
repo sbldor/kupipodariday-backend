@@ -18,7 +18,7 @@ export class Offer {
   item: Wish;
 
   @ManyToOne(() => User, (user) => user.offers)
-  user: string;
+  user: User;
 
   @Column()
   amount: number;
