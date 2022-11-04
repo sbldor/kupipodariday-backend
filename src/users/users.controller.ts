@@ -32,16 +32,21 @@ export class UsersController {
     return this.usersService.create(user);
   }
 
+  @Post('find')
+  public async findMany(@Body() user): Promise<User[]> {
+    return this.usersService.findUsers(user);
+  }
+
   @UseGuards(JwtGuard)
   @Get('me')
-  findUser(@Req() req: any) {
+  async findMe(@Req() req: any) {
     const { username } = req.user;
     return this.usersService.findByUsername(username);
   }
 
   @UseGuards(JwtGuard)
   @Get(':username')
-  async findUserByUserName(@Param('username') username: string) {
+  async findByUserName(@Param('username') username: string) {
     const user = await this.usersService.findByUsername(username);
     return user;
   }
@@ -72,11 +77,6 @@ export class UsersController {
     return this.usersService.findOne(+id);
   }
 
-  @Post('find')
-  public async findMany(@Body() user): Promise<User[]> {
-    return this.usersService.findUsers(user);
-  }
-
   @UseGuards(JwtGuard)
   @Patch('me')
   async update(
@@ -86,12 +86,13 @@ export class UsersController {
     const { id } = req.user;
     return this.usersService.update(id, updateUserDto);
   }
+
   @UseGuards(JwtGuard)
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     const user = await this.usersService.findOne(id);
     if (!user) {
-      throw new NotFoundException('такого пользователя нет');
+      throw new NotFoundException('нет твкого пользователя');
     }
     return this.usersService.remove(+id);
   }

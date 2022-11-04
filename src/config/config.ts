@@ -1,6 +1,14 @@
 export default () => ({
   jwtSecret: 'jwtSecret',
-  YANDEX_CLIENT_ID: '2e95207defc141abb7c86c24366044f5',
-  YANDEX_CLIENT_SECRET: '9dc222311d7c4521b0ba0345fd065cbd',
+  YANDEX_CLIENT_ID: '29ed83ad2dfa46e8806133e70d022032',
+  YANDEX_CLIENT_SECRET: '8a3613d3bb9d41e9bc919aaf8c3f5505',
   YANDEX_REDIRECT_URI: 'http://localhost:3000/oauth/callback',
+  port: parseInt(process.env.PORT) || 3001,
+  db: {
+    database: 'kupipodariday',
+    host: process.env.DATABASE_HOST || 'localhost',
+    port: parseInt(process.env.DATABASE_PORT) || 5432,
+    username: 'student',
+    password: 'student',
+  },
 });

@@ -7,7 +7,6 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class YandexStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService, configService: ConfigService) {
-    /* В конструктор родителя мы можем передать параметры для стратегии */
     super({
       clientID: configService.get('YANDEX_CLIENT_ID'),
       clientSecret: configService.get('YANDEX_CLIENT_SECRET'),

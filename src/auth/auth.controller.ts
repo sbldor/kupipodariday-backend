@@ -15,7 +15,8 @@ export class AuthController {
   @UseGuards(LocalGuard)
   @Post('signin')
   signin(@Req() req) {
-    return this.authService.auth(req.user);
+    const user = req.user;
+    return this.authService.auth(user);
   }
 
   @Post('signup')
@@ -31,7 +32,7 @@ export class AuthController {
   @UseGuards(AuthGuard('yandex'))
   @Get('yandex')
   yandex() {
-    /* Этот метод можно оставить пустым, так как Passport перенаправит пользователя в Яндекс */
+    //
   }
 
   @UseGuards(AuthGuard('yandex'))

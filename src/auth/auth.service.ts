@@ -18,7 +18,7 @@ export class AuthService {
   }
 
   async validatePassword(username: string, password: string) {
-    const user = await this.usersService.findByUsername(username);
+    const user = await this.usersService.findByUsername(username, false);
 
     if (!user) {
       throw new NotFoundException('неправильное имя или пароль');
@@ -28,7 +28,6 @@ export class AuthService {
       if (!matched) {
         return null;
       }
-
       return user;
     });
   }
@@ -39,7 +38,6 @@ export class AuthService {
     if (!user) {
       return await this.usersService.createFromYandex(yandexProfile);
     }
-
     return user;
   }
 }

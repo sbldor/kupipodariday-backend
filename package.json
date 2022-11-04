@@ -1,8 +1,8 @@
 {
   "name": "kupipodariday-backend",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "wishlist service",
+  "author": "Sydor Andrey",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

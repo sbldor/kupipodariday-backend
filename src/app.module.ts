@@ -7,6 +7,7 @@ import { WishlistsModule } from './wishlists/wishlists.module';
 import { OffersModule } from './offers/offers.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { AppService } from './app.service';
 import config from './config/config';
 
 @Module({
@@ -14,11 +15,11 @@ import config from './config/config';
     UsersModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'student',
-      password: 'student',
-      database: 'kupipodariday',
+      host: config().db.host,
+      port: config().db.port,
+      username: config().db.username,
+      password: config().db.password,
+      database: config().db.database,
       autoLoadEntities: true,
       synchronize: true,
     }),
@@ -31,6 +32,6 @@ import config from './config/config';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [AppService],
 })
 export class AppModule {}

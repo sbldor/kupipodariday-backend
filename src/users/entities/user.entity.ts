@@ -1,9 +1,8 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
   OneToMany,
-  JoinTable,
+  PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -14,6 +13,8 @@ import {
   MaxLength,
   MinLength,
   IsFQDN,
+  IsOptional,
+  IsEmpty,
 } from 'class-validator';
 import { Wish } from '../../wishes/entities/wish.entity';
 import { Offer } from '../../offers/entities/offer.entity';
@@ -33,6 +34,7 @@ export class User {
   })
   username: string;
 
+  @IsNotEmpty()
   @IsEmail()
   @Column({
     unique: true,
@@ -41,38 +43,44 @@ export class User {
   email: string;
 
   @MinLength(2, {
-    message: 'от двух символов',
+    message: 'Рассказ о себе слишком короткий',
   })
   @MaxLength(200, {
-    message: 'Слишком большой рассказ о себе',
+    message: 'Рассказ о себе слишком большой',
   })
   @Column({
     default: 'Пока ничего не рассказал о себе',
   })
   about: string;
 
+  @IsOptional()
   @Column({
     default: 'https://i.pravatar.cc/300',
   })
   @IsFQDN()
   avatar: string;
 
-  @Column()
+  @Column({ select: false })
   @IsNotEmpty()
   password: string;
 
+  @IsEmpty()
   @CreateDateColumn()
   createdAt: Date;
 
+  @IsEmpty()
   @UpdateDateColumn()
   updateAt: Date;
 
+  @IsEmpty()
   @OneToMany(() => Wish, (wish) => wish.owner)
   wishes: Wish[];
 
+  @IsEmpty()
   @OneToMany(() => Offer, (offer) => offer.user)
   offers: Offer[];
 
+  @IsEmpty()
   @OneToMany(() => Wishlist, (wishlist) => wishlist.owner)
   wishLists: Wishlist[];
 }

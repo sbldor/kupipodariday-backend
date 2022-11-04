@@ -1,13 +1,9 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateOfferDto } from './dto/create-offer.dto';
-import { UpdateOfferDto } from './dto/update-offer.dto';
 import { WishesService } from '../wishes/wishes.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Wish } from '../wishes/entities/wish.entity';
 import { Repository } from 'typeorm';
 import { Offer } from './entities/offer.entity';
-import { UsersService } from '../users/users.service';
-import { isOwner } from '../utils/utils';
 import { User } from '../users/entities/user.entity';
 
 @Injectable()
@@ -18,26 +14,22 @@ export class OffersService {
     private readonly wishesService: WishesService,
   ) {}
 
-  async create(user: User, createOfferDto: CreateOfferDto) {
-    const wishes = await this.wishesService.findOne(createOfferDto.itemId);
-    const { id } = user;
-    if (createOfferDto.amount < 0) {
+  async create(user: User, offer: CreateOfferDto) {
+    const wishes = await this.wishesService.findOne(offer.itemId);
+    if (offer.amount < 0) {
       throw new BadRequestException('вложение не может быть отрицательным');
     }
-    if (isOwner(id, wishes.owner.id)) {
-      throw new BadRequestException('вы автор');
-    }
-    const balance = wishes.price - wishes.raised;
-    if (createOfferDto.amount > balance) {
+    const money = wishes.price - wishes.raised;
+    if (offer.amount > money) {
       throw new BadRequestException('слишком большая сумма');
     }
-    await this.wishesService.update(createOfferDto.itemId, {
-      raised: wishes.raised + createOfferDto.amount,
+    await this.wishesService.update(offer.itemId, {
+      raised: wishes.raised + offer.amount,
     });
     const wish = await this.wishesService.findOne(wishes.id);
 
     return this.offerRepository.save({
-      ...createOfferDto,
+      ...offer,
       user,
       item: wish,
     });

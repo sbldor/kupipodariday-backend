@@ -12,9 +12,9 @@ export class WishlistsService {
     private wishListRepository: Repository<Wishlist>,
   ) {}
 
-  async create(createWishlistDto: CreateWishlistDto, wishes, user) {
+  async create(wishlist: CreateWishlistDto, wishes, user) {
     return await this.wishListRepository.save({
-      ...createWishlistDto,
+      ...wishlist,
       owner: user,
       items: wishes,
     });
@@ -37,8 +37,8 @@ export class WishlistsService {
     });
   }
 
-  public async update(id: number, updateWishlistDto: UpdateWishlistDto) {
-    return this.wishListRepository.update(id, updateWishlistDto);
+  public async update(id: number, updateWishlist: UpdateWishlistDto) {
+    return this.wishListRepository.update(id, updateWishlist);
   }
 
   public async remove(id: number): Promise<any> {

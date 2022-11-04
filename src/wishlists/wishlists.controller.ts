@@ -27,7 +27,7 @@ export class WishlistsController {
   @UseGuards(JwtGuard)
   @Post()
   async create(@Req() req, @Body() createWishlistDto: CreateWishlistDto) {
-    const wishes = await this.wishesService.findManyByIds(createWishlistDto);
+    const wishes = await this.wishesService.findManyById(createWishlistDto);
     const user = await this.usersService.findOne(req.user.id);
     return this.wishlistsService.create(createWishlistDto, wishes, user);
   }

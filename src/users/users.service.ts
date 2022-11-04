@@ -13,11 +13,11 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const passwordHash = await this.hashedPassword(createUserDto.password);
+  async create(createUser: CreateUserDto): Promise<User> {
+    const hash = await this.hashedPassword(createUser.password);
     const user = this.userRepository.create({
-      ...createUserDto,
-      password: passwordHash,
+      ...createUser,
+      password: hash,
     });
     return await this.userRepository.save(user);
   }
@@ -34,7 +34,7 @@ export class UsersService {
     return this.userRepository.findOneBy({ id });
   }
 
-  async findByUsername(username: string) {
+  async findByUsername(username: string, removePass = true): Promise<any> {
     const user = await this.userRepository.findOne({
       where: {
         username: username,
@@ -44,19 +44,20 @@ export class UsersService {
         wishLists: true,
       },
     });
-    return user;
+    return !removePass ? this.userWithPassword(username) : user;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUser: UpdateUserDto) {
     let newPassword;
-    if (updateUserDto.password) {
-      newPassword = await this.hashedPassword(updateUserDto.password);
+    const password = updateUser.password;
+    if (password) {
+      newPassword = await this.hashedPassword(password);
       return this.userRepository.update(id, {
-        ...updateUserDto,
+        ...updateUser,
         password: newPassword,
       });
     }
-    return this.userRepository.update(id, updateUserDto);
+    return this.userRepository.update(id, updateUser);
   }
 
   async findUsers(user): Promise<User[]> {
@@ -69,6 +70,10 @@ export class UsersService {
     await this.userRepository.delete({ id });
   }
 
+  async createFromYandex(profile: any) {
+    return this.userRepository.save(profile);
+  }
+
   async findByYandexID(email) {
     return await this.userRepository.findOne({
       where: {
@@ -77,7 +82,13 @@ export class UsersService {
     });
   }
 
-  async createFromYandex(profile: any) {
-    return this.userRepository.save(profile);
+  async userWithPassword(username) {
+    const queryBuilder = await this.userRepository
+      .createQueryBuilder()
+      .select('user')
+      .from(User, 'user')
+      .where(`user.username = :username`, { username: `${username}` })
+      .addSelect('user.password');
+    return await queryBuilder.getOne();
   }
 }

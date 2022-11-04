@@ -3,15 +3,12 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   UseGuards,
   Req,
 } from '@nestjs/common';
 import { OffersService } from './offers.service';
 import { CreateOfferDto } from './dto/create-offer.dto';
-import { UpdateOfferDto } from './dto/update-offer.dto';
 import { JwtGuard } from '../guards/jwt.guard';
 
 @Controller('offers')
@@ -21,7 +18,8 @@ export class OffersController {
   @UseGuards(JwtGuard)
   @Post()
   async create(@Req() req, @Body() createOfferDto: CreateOfferDto) {
-    return this.offersService.create(req.user, createOfferDto);
+    const user = req.user;
+    return this.offersService.create(user, createOfferDto);
   }
 
   @UseGuards(JwtGuard)
