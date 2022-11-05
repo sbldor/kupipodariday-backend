@@ -8,12 +8,12 @@ import { Profile } from 'passport-yandex';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly jwtService: JwtService,
-    private readonly usersService: UsersService,
+    private jwtService: JwtService,
+    private usersService: UsersService,
   ) {}
 
   auth(user: User) {
-    const payload = { sub: user.id };
+    const payload = { id: user.id };
     return { access_token: this.jwtService.sign(payload) };
   }
 

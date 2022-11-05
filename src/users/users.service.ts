@@ -47,6 +47,12 @@ export class UsersService {
     return !removePass ? this.userWithPassword(username) : user;
   }
 
+  async findUsers(user): Promise<User[]> {
+    return await this.userRepository.find({
+      where: [{ username: user.query }, { email: user.query }],
+    });
+  }
+
   async update(id: number, updateUser: UpdateUserDto) {
     let newPassword;
     const password = updateUser.password;
@@ -58,12 +64,6 @@ export class UsersService {
       });
     }
     return this.userRepository.update(id, updateUser);
-  }
-
-  async findUsers(user): Promise<User[]> {
-    return await this.userRepository.find({
-      where: [{ username: user.query }, { email: user.query }],
-    });
   }
 
   async remove(id: number): Promise<void> {

@@ -25,8 +25,8 @@ export class WishesController {
 
   @UseGuards(JwtGuard)
   @Post()
-  create(@Req() req, @Body() createWishDto: CreateWishDto): Promise<Wish> {
-    return this.wishesService.create(req.user, createWishDto);
+  create(@Req() req, @Body() createWish: CreateWishDto): Promise<Wish> {
+    return this.wishesService.create(req.user, createWish);
   }
 
   @Get('top')
@@ -39,6 +39,7 @@ export class WishesController {
     return this.wishesService.findLastWishes();
   }
 
+  @UseGuards(JwtGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.wishesService.findOne(+id);
@@ -49,11 +50,13 @@ export class WishesController {
   async update(
     @Req() req,
     @Param('id') id: string,
-    @Body() updateWishDto: UpdateWishDto,
+    @Body() updateWish: UpdateWishDto,
   ) {
     const wish = await this.wishesService.findOne(+id);
-    if (isOwner(req.user.id, wish.owner.id)) {
-      return await this.wishesService.update(+id, updateWishDto);
+    const userId = req.user.id;
+    const ownerId = wish.owner.id;
+    if (isOwner(userId, ownerId)) {
+      return await this.wishesService.update(+id, updateWish);
     }
     throw new ForbiddenException();
   }
@@ -61,12 +64,15 @@ export class WishesController {
   @Delete(':id')
   async remove(@Req() req, @Param('id') id: string) {
     const wish = await this.wishesService.findOne(+id);
-    if (wish.offers.length) {
+    const userId = req.user.id;
+    const ownerId = wish.owner.id;
+    const length = wish.offers.length;
+    if (length) {
       throw new BadRequestException(
         'Невозможно удалить, этот подарок уже поддержали',
       );
     }
-    if (isOwner(req.user.id, wish.owner.id)) {
+    if (isOwner(userId, ownerId)) {
       return this.wishesService.remove(+id);
     }
     throw new ForbiddenException();
@@ -75,7 +81,9 @@ export class WishesController {
   @Post(':id/copy')
   async copy(@Req() req, @Param('id') id: string) {
     const wish = await this.wishesService.findOne(+id);
-    if (isOwner(req.user.id, wish.owner.id)) {
+    const userId = req.user.id;
+    const ownerId = wish.owner.id;
+    if (isOwner(userId, ownerId)) {
       throw new ConflictException();
     }
     const copyWish = {

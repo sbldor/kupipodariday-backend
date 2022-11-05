@@ -8,7 +8,7 @@ import { OffersModule } from './offers/offers.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { AppService } from './app.service';
-import config from './config/config';
+import config from './utils/config';
 
 @Module({
   imports: [
@@ -26,10 +26,10 @@ import config from './config/config';
     ConfigModule.forRoot({
       load: [config],
     }),
+    AuthModule,
     WishesModule,
     WishlistsModule,
     OffersModule,
-    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

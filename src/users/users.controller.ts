@@ -81,10 +81,10 @@ export class UsersController {
   @Patch('me')
   async update(
     @Req() req,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() updateUser: UpdateUserDto,
   ): Promise<UpdateResult> {
     const { id } = req.user;
-    return this.usersService.update(id, updateUserDto);
+    return this.usersService.update(id, updateUser);
   }
 
   @UseGuards(JwtGuard)

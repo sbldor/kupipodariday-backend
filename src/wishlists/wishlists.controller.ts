@@ -26,10 +26,10 @@ export class WishlistsController {
 
   @UseGuards(JwtGuard)
   @Post()
-  async create(@Req() req, @Body() createWishlistDto: CreateWishlistDto) {
-    const wishes = await this.wishesService.findManyById(createWishlistDto);
+  async create(@Req() req, @Body() createWishlist: CreateWishlistDto) {
+    const wishes = await this.wishesService.findManyById(createWishlist);
     const user = await this.usersService.findOne(req.user.id);
-    return this.wishlistsService.create(createWishlistDto, wishes, user);
+    return this.wishlistsService.create(createWishlist, wishes, user);
   }
 
   @UseGuards(JwtGuard)
@@ -46,11 +46,8 @@ export class WishlistsController {
 
   @UseGuards(JwtGuard)
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateWishlistDto: UpdateWishlistDto,
-  ) {
-    return this.wishlistsService.update(+id, updateWishlistDto);
+  update(@Param('id') id: string, @Body() updateWishlist: UpdateWishlistDto) {
+    return this.wishlistsService.update(+id, updateWishlist);
   }
 
   @UseGuards(JwtGuard)

@@ -17,7 +17,8 @@ import { YandexStrategy } from './yandex.strategy';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('jwt_secret'),
+        secret: configService.get<string>('jwtSecret'),
+        signOptions: { expiresIn: '12h' },
       }),
       inject: [ConfigService],
     }),
