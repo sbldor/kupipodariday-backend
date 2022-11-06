@@ -18,6 +18,7 @@ export class CreateUserDto {
   @IsOptional()
   about: string;
 
+  @IsOptional()
   avatar: string;
 
   @IsNotEmpty()

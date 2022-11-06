@@ -19,6 +19,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsOptional()
   about: string;
 
+  @IsOptional()
   avatar: string;
 
   @IsOptional()

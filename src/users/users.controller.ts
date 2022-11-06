@@ -12,7 +12,6 @@ import {
   Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { JwtGuard } from '../guards/jwt.guard';
 import { WishesService } from '../wishes/wishes.service';
@@ -20,6 +19,7 @@ import { Wish } from '../wishes/entities/wish.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateResult } from 'typeorm';
 
+@UseGuards(JwtGuard)
 @Controller('users')
 export class UsersController {
   constructor(
@@ -27,38 +27,29 @@ export class UsersController {
     private readonly wishesService: WishesService,
   ) {}
 
-  @Post()
-  async create(@Body() user: CreateUserDto) {
-    return this.usersService.create(user);
-  }
-
   @Post('find')
   public async findMany(@Body() user): Promise<User[]> {
     return this.usersService.findUsers(user);
   }
 
-  @UseGuards(JwtGuard)
   @Get('me')
   async findMe(@Req() req: any) {
     const { username } = req.user;
     return this.usersService.findByUsername(username);
   }
 
-  @UseGuards(JwtGuard)
   @Get(':username')
   async findByUserName(@Param('username') username: string) {
     const user = await this.usersService.findByUsername(username);
     return user;
   }
 
-  @UseGuards(JwtGuard)
   @Get('me/wishes')
   findWishesMyUser(@Req() req): Promise<Wish[]> {
     const { id } = req.user;
     return this.wishesService.findWishesByUserId(id);
   }
 
-  @UseGuards(JwtGuard)
   @Get(':username/wishes')
   async findWishesByUserName(@Param('username') username: string) {
     const user = await this.usersService.findByUsername(username);
@@ -66,18 +57,16 @@ export class UsersController {
     return wish;
   }
 
-  @UseGuards(JwtGuard)
   @Get()
   findAll(): Promise<User[]> {
     return this.usersService.findAll();
   }
-  @UseGuards(JwtGuard)
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(+id);
   }
 
-  @UseGuards(JwtGuard)
   @Patch('me')
   async update(
     @Req() req,
@@ -87,7 +76,6 @@ export class UsersController {
     return this.usersService.update(id, updateUser);
   }
 
-  @UseGuards(JwtGuard)
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     const user = await this.usersService.findOne(id);

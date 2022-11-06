@@ -20,13 +20,9 @@ export class AuthController {
   }
 
   @Post('signup')
-  async signup(@Body() createUserDto: CreateUserDto) {
-    try {
-      const user = await this.usersService.create(createUserDto);
-      return this.authService.auth(user);
-    } catch (err) {
-      throw err.detail;
-    }
+  async signup(@Body() createUser: CreateUserDto) {
+    const user = await this.usersService.create(createUser);
+    return this.authService.auth(user);
   }
 
   @UseGuards(AuthGuard('yandex'))

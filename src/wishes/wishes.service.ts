@@ -40,6 +40,7 @@ export class WishesService {
       where: {
         copied: MoreThan(0),
       },
+      take: 10,
     });
   }
 

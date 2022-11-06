@@ -7,5 +7,6 @@ export class CreateWishlistDto {
   @IsNotEmpty()
   image: string;
 
+  @IsNotEmpty()
   itemIds: [number];
 }

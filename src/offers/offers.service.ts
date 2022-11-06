@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Offer } from './entities/offer.entity';
 import { User } from '../users/entities/user.entity';
+import { isOwner } from 'src/utils/utils';
 
 @Injectable()
 export class OffersService {
@@ -16,6 +17,7 @@ export class OffersService {
 
   async create(user: User, offer: CreateOfferDto) {
     const wishes = await this.wishesService.findOne(offer.itemId);
+    const { id } = user;
     if (offer.amount < 0) {
       throw new BadRequestException('вложение не может быть отрицательным');
     }
@@ -26,6 +28,9 @@ export class OffersService {
     await this.wishesService.update(offer.itemId, {
       raised: wishes.raised + offer.amount,
     });
+    if (isOwner(id, wishes.owner.id)) {
+      throw new BadRequestException('вы автор');
+    }
     const wish = await this.wishesService.findOne(wishes.id);
 
     return this.offerRepository.save({

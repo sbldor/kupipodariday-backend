@@ -9,6 +9,8 @@ export class CreateWishDto {
 
   @IsNotEmpty()
   image: string;
+
+  @IsNotEmpty()
   price: number;
 
   @Length(1, 1024, {

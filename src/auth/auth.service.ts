@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '../users/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
-import * as bcrypt from 'bcrypt';
 import { Profile } from 'passport-yandex';
+import { comparePassword } from '../utils/utils';
 
 @Injectable()
 export class AuthService {
@@ -24,12 +24,7 @@ export class AuthService {
       throw new NotFoundException('неправильное имя или пароль');
     }
 
-    return bcrypt.compare(password, user.password).then((matched) => {
-      if (!matched) {
-        return null;
-      }
-      return user;
-    });
+    return comparePassword(password, user);
   }
 
   async validateFromYandex(yandexProfile: Profile) {

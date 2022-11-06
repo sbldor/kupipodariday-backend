@@ -18,7 +18,9 @@ export class YandexStrategy extends PassportStrategy(Strategy) {
     const user = await this.authService.validateFromYandex(profile);
 
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException(
+        'Неправильное имя пользователя или пароль',
+      );
     }
 
     return user;
